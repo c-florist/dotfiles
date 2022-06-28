@@ -63,7 +63,7 @@ HIST_STAMPS="yyyy-mm-dd"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git asdf direnv pip python docker npm golang)
+plugins=(git asdf direnv pip python poetry docker npm golang)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -86,3 +86,6 @@ source $ZSH/oh-my-zsh.sh
 
 # add Pulumi to the PATH
 export PATH=$PATH:$HOME/.pulumi/bin
+
+# add Poetry to the PATH
+export PATH="$HOME/.poetry/bin:$PATH"
