@@ -1,1 +1,1 @@
-alias processing=/opt/processing-*/processing
+alias processing=/opt/processing-4.0.1/processing
