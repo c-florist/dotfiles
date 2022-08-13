@@ -85,7 +85,10 @@ source $ZSH/oh-my-zsh.sh
 # export ARCHFLAGS="-arch x86_64"
 
 # add Pulumi to the PATH
-export PATH=$PATH:$HOME/.pulumi/bin
+export PATH="$PATH:$HOME/.pulumi/bin"
 
 # add Poetry to the PATH
-export PATH="$HOME/.poetry/bin:$PATH"
+export PATH="$PATH:$HOME/.poetry/bin"
+
+# add direnv hook
+eval "$(direnv hook zsh)"
