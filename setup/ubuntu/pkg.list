@@ -1,4 +1,4 @@
+build-essential
+htop
 direnv
 asdf
-direnv
-build-essential
