@@ -69,8 +69,5 @@ source $ZSH/oh-my-zsh.sh
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-# add Poetry to the PATH
-export PATH="$PATH:$HOME/.poetry/bin"
-
 # add direnv hook
 eval "$(direnv hook zsh)"
