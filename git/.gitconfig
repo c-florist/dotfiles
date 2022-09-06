@@ -1,0 +1,7 @@
+[user]
+	email = contact@kyoh.run
+	name = Connor Keogh
+[core]
+	excludesFile = ~/.gitignore_global
+[commit]
+	gpgsign = true
