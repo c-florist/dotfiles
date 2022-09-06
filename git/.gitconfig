@@ -1,7 +1,19 @@
+[alias]
+    whoami = config user.email
+
+[branch]
+	# Show most recently changed branches first.
+	sort = -committerdate
+
 [user]
 	email = contact@kyoh.run
 	name = Connor Keogh
+
 [core]
 	excludesFile = ~/.gitignore_global
+
 [commit]
 	gpgsign = true
+
+[init]
+	defaultBranch = main

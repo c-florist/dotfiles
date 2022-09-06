@@ -1,4 +1,4 @@
-source-search() {
+source-search(){
     find . \( \
         -name node_modules -o \
         -name .mypy_cache -o \
