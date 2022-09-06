@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-cat ~/setup/tools.list | xargs sudo apt install -y
-
+"$(pwd)/setup/pkg.list" | xargs sudo apt install -y
