@@ -69,5 +69,8 @@ source $ZSH/oh-my-zsh.sh
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
+# add asdf hook
+. "$HOME/.asdf/asdf.sh"
+
 # add direnv hook
 eval "$(direnv hook zsh)"
