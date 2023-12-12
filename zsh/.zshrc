@@ -72,5 +72,10 @@ source $ZSH/oh-my-zsh.sh
 # add asdf hook
 . "$HOME/.asdf/asdf.sh"
 
+# setup GOPATH
+export GOPATH=$(go env GOPATH)
+
+export PATH=$PATH:$GOPATH/bin
+
 # add direnv hook
 eval "$(direnv hook zsh)"
