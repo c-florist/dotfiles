@@ -2,7 +2,7 @@
 
 DOTFILES="${DOTFILES:-$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )}"
 
-INSTALL_ACTIONS="omz zsh"
+INSTALL_ACTIONS="zsh omz"
 
 require_dir(){ [ -e "$1" ] || mkdir -p "$1"; }
 
