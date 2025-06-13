@@ -6,4 +6,7 @@ trusted_config_paths = [
 ]
 
 [tools]
+# python = "3.13"
+# node = "22.11"
 just = "latest"
+# terraform = "latest"
