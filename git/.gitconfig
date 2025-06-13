@@ -6,8 +6,9 @@
 	sort = -committerdate
 
 [user]
-	email = contact@kyoh.run
-	name = Connor Keogh
+	name = Connor Flowers
+	email = cjflowers@pm.me
+	signingkey = FILL_ME_OUT
 
 [core]
 	excludesFile = ~/.gitignore_global
