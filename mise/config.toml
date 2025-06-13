@@ -1,0 +1,9 @@
+[settings]
+experimental = true
+plugin_autoupdate_last_check_duration = '1 week'
+trusted_config_paths = [
+    '~/dev',
+]
+
+[tools]
+just = "latest"
