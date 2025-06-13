@@ -1,0 +1,2 @@
+brew "cloud-sql-proxy"
+cask "google-cloud-sdk"
