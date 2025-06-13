@@ -2,19 +2,40 @@
     whoami = config user.email
 
 [branch]
-	# Show most recently changed branches first.
-	sort = -committerdate
+	sort = -committerdate ; Show most recently changed branches first.
 
 [user]
 	name = Connor Flowers
-	email = cjflowers@pm.me
-	signingkey = FILL_ME_OUT
+	useConfigOnly = true
 
 [core]
+    editor = nano
 	excludesFile = ~/.gitignore_global
 
 [commit]
+    verbose = true
 	gpgsign = true
+
+[credential]
+    helper = osxkeychain
 
 [init]
 	defaultBranch = main
+
+[fetch]
+	prune = true
+    pruneTags = true
+	writeCommitGraph = true
+
+[merge]
+    conflictStyle = zdiff3
+
+[push]
+    autoSetupRemote = true
+
+[rebase]
+    autosquash = true
+    autostash = true
+
+[diff]
+    algorithm = histogram
