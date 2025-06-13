@@ -1,0 +1,17 @@
+Host *
+  ServerAliveInterval 300
+  IdentitiesOnly yes
+
+Host work-gh
+  HostName github.com
+  User git
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+
+Host my-gh
+  HostName github.com
+  User git
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519_kyohdev
