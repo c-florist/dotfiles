@@ -1,3 +1,8 @@
+set export
+set dotenv-load := true
+
+DOCKER_BUILDKIT := "1"
+
 # ANSI color codes
 COLOR_RED := "\\033[0;31m"
 COLOR_GREEN := "\\033[0;32m"
