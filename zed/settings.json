@@ -29,6 +29,7 @@
     "everforest": true
   },
   "base_keymap": "JetBrains",
+  "confirm_quit": true,
   "ui_font_size": 14,
   "buffer_font_size": 14,
   "theme": {
