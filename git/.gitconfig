@@ -39,3 +39,7 @@
 
 [diff]
     algorithm = histogram
+
+[alias]
+    lg = log --graph --pretty=format:'%Cred%h%Creset - %s %Cgreen(%ar) %C(bold blue)[%an]%Creset%C(yellow)%d%Creset' --abbrev-commit
+    glog = log --all --decorate --oneline --graph
