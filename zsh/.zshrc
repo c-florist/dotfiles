@@ -1,21 +1,18 @@
-export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-# Path to oh-my-zsh installation.
+# oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
-
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+plugins=(git docker z mise)
 ZSH_THEME="dst"
-
-# Auto-update behaviour
+COMPLETION_WAITING_DOTS="true"
+HIST_STAMPS="yyyy-mm-dd"
+source $ZSH/oh-my-zsh.sh
 zstyle ':omz:update' mode reminder
 
-COMPLETION_WAITING_DOTS="true"
+export DOTFILES_PATH="$HOME/dotfiles"
 
-HIST_STAMPS="yyyy-mm-dd"
+source $DOTFILES_PATH/omz/aliases.zsh
+source $DOTFILES_PATH/omz/functions.zsh
 
-plugins=(git asdf direnv pip python docker npm)
-
-source $ZSH/oh-my-zsh.sh
+export PATH="$HOME/.local/bin:$DOTFILES_PATH/bin:$PATH"
 
 # mise-en-place
 eval "$(~/.local/bin/mise activate zsh)"
