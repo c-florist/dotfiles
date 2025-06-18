@@ -2,6 +2,30 @@
 
 set -e  # Exit on any error
 
+# Parse command line arguments
+SKIP_BREW=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --skip-brew)
+            SKIP_BREW=true
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: $0 [OPTIONS]"
+            echo "Options:"
+            echo "  --skip-brew    Skip Brewfile package installation"
+            echo "  -h, --help     Show this help message"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use -h or --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -14,6 +38,9 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo -e "${BLUE}🚀 Starting macOS dotfiles setup...${NC}"
 echo -e "${BLUE}Dotfiles directory: ${DOTFILES_DIR}${NC}"
+if [[ "$SKIP_BREW" == "true" ]]; then
+    echo -e "${YELLOW}⚠️  Skipping Brewfile installation${NC}"
+fi
 
 # Function to print status messages
 print_status() {
@@ -66,10 +93,26 @@ else
 fi
 
 # Install Homebrew packages from Brewfile
-if [[ -f "$DOTFILES_DIR/homebrew/Brewfile" ]]; then
+if [[ "$SKIP_BREW" == "true" ]]; then
+    print_warning "Skipping Brewfile installation as requested"
+elif [[ -f "$DOTFILES_DIR/homebrew/Brewfile" ]]; then
     echo -e "${YELLOW}Installing Homebrew packages from Brewfile...${NC}"
-    brew bundle --file="$DOTFILES_DIR/homebrew/Brewfile"
-    print_status "Homebrew packages installed successfully"
+    
+    # Check if all packages are already installed
+    if brew bundle check --file="$DOTFILES_DIR/homebrew/Brewfile" &>/dev/null; then
+        print_status "All Brewfile packages already installed"
+    else
+        print_warning "Installing missing packages (without upgrading existing ones)..."
+        # Use --no-upgrade to avoid unnecessary upgrades that can cause issues
+        brew bundle --file="$DOTFILES_DIR/homebrew/Brewfile" --no-upgrade || {
+            print_warning "Some packages failed to install, but continuing..."
+            # Don't exit on error for brew bundle since some packages might fail
+            set +e
+        }
+        set -e
+    fi
+    
+    print_status "Homebrew packages processed successfully"
 else
     print_warning "Brewfile not found at $DOTFILES_DIR/homebrew/Brewfile"
 fi
@@ -107,6 +150,15 @@ for file in "$DOTFILES_DIR/zsh"/.z*; do
     fi
 done
 
+# Create symlinks for git configuration files
+echo -e "${YELLOW}Creating symlinks for git configuration files...${NC}"
+for file in "$DOTFILES_DIR/git"/.git*; do
+    if [[ -f "$file" ]]; then
+        filename=$(basename "$file")
+        backup_and_link "$file" "$HOME/$filename"
+    fi
+done
+
 # Install mise-en-place if not already installed
 if ! command -v mise &>/dev/null; then
     echo -e "${YELLOW}Installing mise...${NC}"
@@ -114,6 +166,61 @@ if ! command -v mise &>/dev/null; then
     print_status "mise installed successfully"
 else
     print_status "mise already installed"
+fi
+
+# Create symlink for mise config file
+echo -e "${YELLOW}Creating symlink for mise configuration...${NC}"
+if [[ -f "$DOTFILES_DIR/mise/config.toml" ]]; then
+    backup_and_link "$DOTFILES_DIR/mise/config.toml" "$HOME/.config/mise/config.toml"
+else
+    print_warning "mise config file not found at $DOTFILES_DIR/mise/config.toml"
+fi
+
+# Setup SSH configuration
+echo -e "${YELLOW}Setting up SSH configuration...${NC}"
+if [[ -f "$DOTFILES_DIR/ssh/config" ]]; then
+    # Create ~/.ssh directory if it doesn't exist
+    mkdir -p "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
+    
+    # Copy SSH config file (not symlink for security)
+    if [[ -f "$HOME/.ssh/config" && ! -L "$HOME/.ssh/config" ]]; then
+        print_warning "Backing up existing ~/.ssh/config to ~/.ssh/config.backup"
+        cp "$HOME/.ssh/config" "$HOME/.ssh/config.backup"
+    elif [[ -L "$HOME/.ssh/config" ]]; then
+        print_warning "Removing existing symlink ~/.ssh/config"
+        rm "$HOME/.ssh/config"
+    fi
+    
+    cp "$DOTFILES_DIR/ssh/config" "$HOME/.ssh/config"
+    chmod 600 "$HOME/.ssh/config"
+    print_status "SSH config copied to ~/.ssh/config"
+    
+    # Extract IdentityFile entries and prompt for key creation
+    echo -e "${BLUE}Checking for SSH keys specified in config...${NC}"
+    identity_files=$(grep "IdentityFile" "$DOTFILES_DIR/ssh/config" | awk '{print $2}' | sed 's|~|'$HOME'|g')
+    
+    for key_file in $identity_files; do
+        if [[ ! -f "$key_file" ]]; then
+            echo -e "${YELLOW}SSH key not found: $key_file${NC}"
+            read -p "Would you like to create this SSH key? (y/n): " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                read -p "Enter your email for the SSH key: " email
+                ssh-keygen -t ed25519 -C "$email" -f "$key_file"
+                print_status "Created SSH key: $key_file"
+                echo -e "${BLUE}Public key content (add this to your Git provider):${NC}"
+                cat "${key_file}.pub"
+                echo
+            else
+                print_warning "Skipped creating SSH key: $key_file"
+            fi
+        else
+            print_status "SSH key already exists: $key_file"
+        fi
+    done
+else
+    print_warning "SSH config file not found at $DOTFILES_DIR/ssh/config"
 fi
 
 # Set zsh as the default shell if it isn't already
