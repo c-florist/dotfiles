@@ -1,13 +1,10 @@
 # dotfiles
 
-Personal dotfiles repo.
+Personal dotfiles.
 
 ```shell
-cd ~/src
-git clone https://github.com/kyoh-dev/dotfiles.git
+mkdir -p ~/dev/personal && cd ~/dev
+git clone git@kyoh-gh:kyoh-dev/dotfiles.git
 cd dotfiles
 ./install.sh
-
-
-Usage: ./install.sh [omz] [zsh]
 ```

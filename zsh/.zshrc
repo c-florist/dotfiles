@@ -7,7 +7,7 @@ HIST_STAMPS="yyyy-mm-dd"
 source $ZSH/oh-my-zsh.sh
 zstyle ':omz:update' mode reminder
 
-export DOTFILES_PATH="$HOME/dotfiles"
+export DOTFILES_PATH="$HOME/dev/personal/dotfiles"
 
 source $DOTFILES_PATH/omz/aliases.zsh
 source $DOTFILES_PATH/omz/functions.zsh
