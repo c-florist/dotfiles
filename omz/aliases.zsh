@@ -1,6 +1,5 @@
 # Git
 alias gswl='git switch $(git_main_branch) && git pull'
-alias gre="git restore"
 
 # Golang
 alias got="go test -v"
