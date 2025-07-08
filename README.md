@@ -3,8 +3,15 @@
 Personal dotfiles.
 
 ```shell
-mkdir -p ~/dev/personal && cd ~/dev
-git clone git@kyoh-gh:kyoh-dev/dotfiles.git
+mkdir -p ~/dev/personal && cd ~/dev/personal
+git clone git@my-gh:kyoh-dev/dotfiles.git
 cd dotfiles
-./install.sh
+./install_mac.sh
+```
+
+## Additional steps
+
+1. Install pre-commit
+```shell
+pipx install pre-commit
 ```
