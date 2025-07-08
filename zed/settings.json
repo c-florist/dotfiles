@@ -19,6 +19,7 @@
     "terraform": true,
     // Tooling
     "biome": true,
+    "ruff": true,
     // File formats
     "html": true,
     "toml": true,
@@ -26,6 +27,7 @@
     "docker-compose": true,
     "csv": true,
     // Themes
+    "catppuccin": true,
     "everforest": true
   },
   "base_keymap": "JetBrains",
