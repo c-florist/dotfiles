@@ -7,11 +7,6 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "agent": {
-    "model_parameters": [],
-    "single_file_review": false,
-    "version": "2"
-  },
   "auto_install_extensions": {
     // Languages
     "just": true,
@@ -30,17 +25,29 @@
     "catppuccin": true,
     "everforest": true
   },
-  "base_keymap": "JetBrains",
+  "tab_size": 2,
+  "base_keymap": "VSCode",
   "confirm_quit": true,
   "ui_font_size": 14,
   "buffer_font_size": 14,
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "One Dark"
+    "dark": "Catppuccin Mocha - No Italics"
   },
   "autosave": "on_focus_change",
   "format_on_save": "off",
+  "languages": {
+    "Rust": {
+      "tab_size": 4
+    },
+    "Python": {
+      "tab_size": 4
+    }
+  },
+  "project_panel": {
+    "auto_reveal_entries": false
+  },
   "lsp": {
     "pyright": {
       "settings": {
