@@ -176,6 +176,24 @@ else
     print_warning "mise config file not found at $DOTFILES_DIR/mise/config.toml"
 fi
 
+# Create symlink for Zed settings
+echo -e "${YELLOW}Creating symlink for Zed configuration...${NC}"
+if [[ -f "$DOTFILES_DIR/zed/settings.json" ]]; then
+    mkdir -p "$HOME/.config/zed"
+    backup_and_link "$DOTFILES_DIR/zed/settings.json" "$HOME/.config/zed/settings.json"
+else
+    print_warning "Zed settings file not found at $DOTFILES_DIR/zed/settings.json"
+fi
+
+# Create symlink for Docker config
+echo -e "${YELLOW}Creating symlink for Docker configuration...${NC}"
+if [[ -f "$DOTFILES_DIR/docker/macos.config.json" ]]; then
+    mkdir -p "$HOME/.docker"
+    backup_and_link "$DOTFILES_DIR/docker/macos.config.json" "$HOME/.docker/config.json"
+else
+    print_warning "Docker config file not found at $DOTFILES_DIR/docker/macos.config.json"
+fi
+
 # Setup SSH configuration
 echo -e "${YELLOW}Setting up SSH configuration...${NC}"
 if [[ -f "$DOTFILES_DIR/ssh/config" ]]; then
@@ -221,6 +239,15 @@ if [[ -f "$DOTFILES_DIR/ssh/config" ]]; then
     done
 else
     print_warning "SSH config file not found at $DOTFILES_DIR/ssh/config"
+fi
+
+# Install uv if not already installed
+if ! command -v uv &>/dev/null; then
+    echo -e "${YELLOW}Installing uv...${NC}"
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    print_status "uv installed successfully"
+else
+    print_status "uv already installed"
 fi
 
 # Set zsh as the default shell if it isn't already
