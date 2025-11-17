@@ -7,6 +7,22 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "show_edit_predictions": true,
+  "edit_predictions": {
+      "mode": "eager"
+  },
+  "features": {
+    "edit_prediction_provider": "copilot"
+  },
+  "telemetry": {
+    "diagnostics": true,
+    "metrics": false
+  },
+  "icon_theme": {
+    "mode": "system",
+    "light": "Zed (Default)",
+    "dark": "Zed (Default)"
+  },
   "auto_install_extensions": {
     // Languages
     "sql": true,
@@ -42,8 +58,10 @@
     "Python": {
       "language_servers": [
         "basedpyright",
-        "!pyright",
-        "!pylsp"
+        "..."
+        // Use ty and not basedpyright for LSP
+        // "ty",
+        // "!basedpyright",
       ]
     }
   },
@@ -53,14 +71,9 @@
   "lsp": {
     "basedpyright": {
       "settings": {
-        "python": {
-          "pythonPath": ".venv/bin/python"
-        },
-        "basedpyright.analysis": {
+        "analysis": {
           "diagnosticMode": "workspace",
-          "inlayHints": {
-            "callArgumentNames": false
-          }
+          "inlayHints.callArgumentNames": false
         }
       }
     }

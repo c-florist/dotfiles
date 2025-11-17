@@ -14,4 +14,4 @@ Host my-gh
   User git
   AddKeysToAgent yes
   UseKeychain yes
-  IdentityFile ~/.ssh/id_ed25519_kyohdev
+  IdentityFile ~/.ssh/id_ed25519_cflorist

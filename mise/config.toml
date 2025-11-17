@@ -4,8 +4,14 @@ plugin_autoupdate_last_check_duration = '1 week'
 trusted_config_paths = [
     '~/dev',
 ]
+python_compile = true
 
 [tools]
-# python = "3.13"
-# node = "22.11"
-# terraform = "latest"
+python = "3.12.1"
+node = "18"
+pnpm = "8"
+aws-iam-authenticator = "0.6.11"
+kubectx = "latest"
+kubectl = "latest"
+awscli = "latest"
+terraform = "latest"
