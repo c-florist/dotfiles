@@ -5,6 +5,7 @@
 **/.direnv/
 **/.DS_Store
 **/.mise.local.toml
+**/.worktrees/
 **/.cursor/
 **/DEVELOPMENT_PLAN.md
 **/DEPLOYMENT_PLAN.md
