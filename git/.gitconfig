@@ -44,5 +44,5 @@
 [diff]
     algorithm = histogram
 
-[item]
-    key = main
+[transfer]
+    fsckobjects = true
