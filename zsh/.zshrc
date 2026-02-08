@@ -30,6 +30,13 @@ export FZF_ALT_C_OPTS="--preview 'tree -C -L 2 {}' --preview-window=right:50%"
 # mise-en-place
 eval "$(~/.local/bin/mise activate zsh)"
 
+# Kitty shell integration
+if [[ "$TERM" == "xterm-kitty" ]]; then
+    autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
+    kitty-integration
+    unfunction kitty-integration
+fi
+
 # MacOS
 ## Add libpq to PATH
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
