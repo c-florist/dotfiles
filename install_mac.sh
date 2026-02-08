@@ -291,6 +291,18 @@ else
     print_status "zsh is already the default shell"
 fi
 
+# Apply macOS system defaults
+if [[ -f "$DOTFILES_DIR/macos/defaults.sh" ]]; then
+    read -p "Apply macOS system defaults (keyboard, Dock, Finder, etc.)? (y/n): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        bash "$DOTFILES_DIR/macos/defaults.sh"
+        print_status "macOS defaults applied"
+    else
+        print_warning "Skipped macOS defaults (run macos/defaults.sh manually anytime)"
+    fi
+fi
+
 echo -e "${GREEN}🎉 Setup complete!${NC}"
 echo -e "${BLUE}Please restart your terminal or run 'source ~/.zshrc' to apply changes.${NC}"
 echo -e "${BLUE}You may also want to restart your terminal session to ensure all changes take effect.${NC}"
