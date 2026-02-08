@@ -17,6 +17,16 @@ export DOTFILES_PATH="$HOME/dev/dotfiles"
 
 export PATH="$HOME/.local/bin:$DOTFILES_PATH/bin:$PATH"
 
+# fzf - Catppuccin Frappe colors + preview configuration
+export FZF_DEFAULT_OPTS=" \
+  --color=bg+:#414559,bg:#303446,spinner:#f2d5cf,hl:#e78284 \
+  --color=fg:#c6d0f5,header:#e78284,info:#ca9ee6,pointer:#f2d5cf \
+  --color=marker:#a6d189,fg+:#c6d0f5,prompt:#ca9ee6,hl+:#e78284 \
+  --color=selected-bg:#51576d \
+  --height=60% --layout=reverse --border"
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:200 {}' --preview-window=right:50%"
+export FZF_ALT_C_OPTS="--preview 'tree -C -L 2 {}' --preview-window=right:50%"
+
 # mise-en-place
 eval "$(~/.local/bin/mise activate zsh)"
 
