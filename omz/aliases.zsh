@@ -15,6 +15,7 @@ alias tf="terraform"
 alias cat="bat"
 alias mr="mise run"
 alias k="kubectl"
+alias kns="kubens"
 
 # Python
 ## Django

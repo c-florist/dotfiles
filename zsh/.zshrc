@@ -1,6 +1,6 @@
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
-plugins=(git docker z mise direnv fzf)
+plugins=(git docker z mise direnv fzf kubectl)
 ZSH_THEME="dst"
 COMPLETION_WAITING_DOTS="true"
 HIST_STAMPS="yyyy-mm-dd"
