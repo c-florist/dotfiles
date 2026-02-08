@@ -44,5 +44,11 @@
 [diff]
     algorithm = histogram
 
+[column]
+    ui = auto
+
+[log]
+    date = iso
+
 [transfer]
     fsckobjects = true
