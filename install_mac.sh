@@ -176,6 +176,38 @@ else
     print_warning "mise config file not found at $DOTFILES_DIR/mise/config.toml"
 fi
 
+# Create symlinks for Kitty configuration
+echo -e "${YELLOW}Creating symlinks for Kitty configuration...${NC}"
+mkdir -p "$HOME/.config/kitty"
+if [[ -f "$DOTFILES_DIR/kitty/kitty.conf" ]]; then
+    backup_and_link "$DOTFILES_DIR/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
+else
+    print_warning "Kitty config not found at $DOTFILES_DIR/kitty/kitty.conf"
+fi
+
+# Install Kitty theme if not already present
+if [[ ! -f "$HOME/.config/kitty/current-theme.conf" ]]; then
+    if command -v kitten &>/dev/null; then
+        echo -e "${YELLOW}Installing Kitty theme (Catppuccin-Frappe)...${NC}"
+        kitten themes --reload-in=all Catppuccin-Frappe
+        print_status "Kitty theme installed"
+    else
+        print_warning "kitten not found, install Kitty first then run: kitten themes Catppuccin-Frappe"
+    fi
+else
+    print_status "Kitty theme already installed"
+fi
+
+# Create symlinks for Oh My Zsh custom files
+echo -e "${YELLOW}Setting up Oh My Zsh custom files...${NC}"
+OMZ_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+for file in "$DOTFILES_DIR/omz"/*.zsh; do
+    if [[ -f "$file" ]]; then
+        filename=$(basename "$file")
+        backup_and_link "$file" "$OMZ_CUSTOM/$filename"
+    fi
+done
+
 # Create symlink for Zed settings
 echo -e "${YELLOW}Creating symlink for Zed configuration...${NC}"
 if [[ -f "$DOTFILES_DIR/zed/settings.json" ]]; then
