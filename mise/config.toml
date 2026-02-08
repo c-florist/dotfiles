@@ -7,9 +7,9 @@ trusted_config_paths = [
 python_compile = true
 
 [tools]
-python = "3.12.1"
-node = "18"
-pnpm = "8"
+python = "3.13"
+node = "22"
+pnpm = "10"
 aws-iam-authenticator = "0.6.11"
 kubectx = "latest"
 kubectl = "latest"
