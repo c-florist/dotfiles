@@ -12,7 +12,7 @@ alias nosleep='caffeinate -d'
 # Tooling
 alias j="just"
 alias tf="terraform"
-alias cat="bat -p --no-paging --theme=gruvbox-dark"
+alias cat="bat"
 alias mr="mise run"
 alias k="kubectl"
 

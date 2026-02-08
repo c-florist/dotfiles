@@ -208,6 +208,15 @@ for file in "$DOTFILES_DIR/omz"/*.zsh; do
     fi
 done
 
+# Create symlink for bat config
+echo -e "${YELLOW}Creating symlink for bat configuration...${NC}"
+if [[ -f "$DOTFILES_DIR/bat/config" ]]; then
+    mkdir -p "$HOME/.config/bat"
+    backup_and_link "$DOTFILES_DIR/bat/config" "$HOME/.config/bat/config"
+else
+    print_warning "bat config not found at $DOTFILES_DIR/bat/config"
+fi
+
 # Create symlink for Zed settings
 echo -e "${YELLOW}Creating symlink for Zed configuration...${NC}"
 if [[ -f "$DOTFILES_DIR/zed/settings.json" ]]; then

@@ -1,0 +1,7 @@
+--theme="Catppuccin Frappe"
+--style="numbers,changes"
+--paging=never
+--tabs=4
+--map-syntax="*.env:Bourne Again Shell (bash)"
+--map-syntax="*.envrc:Bourne Again Shell (bash)"
+--map-syntax=".dockerignore:Git Ignore"
