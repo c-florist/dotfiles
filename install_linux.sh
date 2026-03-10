@@ -2,15 +2,15 @@
 
 set -e
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-DIM='\033[2m'
-NC='\033[0m'
+# Colors for output (ANSI-C quoting so escapes work with both echo and printf)
+RED=$'\033[0;31m'
+GREEN=$'\033[0;32m'
+YELLOW=$'\033[1;33m'
+BLUE=$'\033[0;34m'
+CYAN=$'\033[0;36m'
+BOLD=$'\033[1m'
+DIM=$'\033[2m'
+NC=$'\033[0m'
 
 # Get the directory where this script is located
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -113,34 +113,34 @@ show_menu() {
 run_menu() {
     while true; do
         show_menu
-        echo -ne "  ${CYAN}>${NC} "
-        read -r choice
+        printf "  ${CYAN}>${NC} "
+        # Read a single keypress without waiting for Enter
+        read -rsn1 key
 
-        case "$choice" in
-            [0-9]|[0-9][0-9])
-                local idx=$((choice - 1))
-                if [[ $idx -ge 0 && $idx -lt ${#COMPONENTS[@]} ]]; then
-                    if [[ "${SELECTED[$idx]}" == "1" ]]; then
-                        SELECTED[$idx]="0"
-                    else
-                        SELECTED[$idx]="1"
-                    fi
+        # If first char is a digit, check for a second digit (for items 10+)
+        if [[ "$key" =~ [0-9] ]]; then
+            local choice="$key"
+            # Brief timeout read for a possible second digit
+            read -rsn1 -t 0.5 key2 2>/dev/null || true
+            if [[ "$key2" =~ [0-9] ]]; then
+                choice="${choice}${key2}"
+            fi
+            local idx=$((choice - 1))
+            if [[ $idx -ge 0 && $idx -lt ${#COMPONENTS[@]} ]]; then
+                if [[ "${SELECTED[$idx]}" == "1" ]]; then
+                    SELECTED[$idx]="0"
+                else
+                    SELECTED[$idx]="1"
                 fi
-                ;;
-            a|A)
-                for i in "${!SELECTED[@]}"; do SELECTED[$i]="1"; done
-                ;;
-            n|N)
-                for i in "${!SELECTED[@]}"; do SELECTED[$i]="0"; done
-                ;;
-            i|I)
-                break
-                ;;
-            q|Q)
-                echo -e "\n  ${DIM}Cancelled.${NC}"
-                exit 0
-                ;;
-        esac
+            fi
+        else
+            case "$key" in
+                a|A) for i in "${!SELECTED[@]}"; do SELECTED[$i]="1"; done ;;
+                n|N) for i in "${!SELECTED[@]}"; do SELECTED[$i]="0"; done ;;
+                i|I) break ;;
+                q|Q) printf "\n  ${DIM}Cancelled.${NC}\n"; exit 0 ;;
+            esac
+        fi
     done
 }
 
