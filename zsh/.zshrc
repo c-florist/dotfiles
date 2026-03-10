@@ -1,6 +1,6 @@
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
-plugins=(git docker z mise direnv fzf kubectl)
+plugins=(git docker z mise fzf kubectl)
 ZSH_THEME="dst"
 COMPLETION_WAITING_DOTS="true"
 HIST_STAMPS="yyyy-mm-dd"
@@ -37,9 +37,10 @@ if [[ "$TERM" == "xterm-kitty" ]]; then
     unfunction kitty-integration
 fi
 
-# MacOS
-## Add libpq to PATH
-export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+# macOS-only
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+fi
 
 fpath+=~/.zfunc; autoload -Uz compinit; compinit
 
