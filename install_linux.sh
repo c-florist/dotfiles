@@ -62,7 +62,7 @@ COMPONENTS=(
 )
 
 DESCRIPTIONS=(
-    "bat, curl, docker, fzf, gh, git, gnupg, htop, jq, ripgrep, tree, pipx, pnpm"
+    "Essential (htop,bat,curl,fzf,git,gnupg,rg,zsh) + optional (gh,jq,tree,pipx,pnpm,docker)"
     "Framework for managing zsh configuration"
     "Symlink zsh dotfiles to home directory"
     "Symlink git config files to home directory"
@@ -169,64 +169,102 @@ backup_and_link() {
 install_system_packages() {
     echo -e "\n${BLUE}Installing system packages via ${PKG_MGR}...${NC}"
 
-    # Common package names (work across dnf/apt/pacman with minor differences)
-    local -A pkg_map_dnf=(
-        [bat]="bat" [curl]="curl" [fzf]="fzf" [gh]="gh"
-        [gnupg]="gnupg2" [git]="git" [htop]="htop" [jq]="jq"
-        [ripgrep]="ripgrep" [tree]="tree" [pipx]="pipx" [zsh]="zsh"
-    )
-    local -A pkg_map_apt=(
-        [bat]="bat" [curl]="curl" [fzf]="fzf" [gh]="gh"
-        [gnupg]="gnupg" [git]="git" [htop]="htop" [jq]="jq"
-        [ripgrep]="ripgrep" [tree]="tree" [pipx]="pipx" [zsh]="zsh"
-    )
-    local -A pkg_map_pacman=(
-        [bat]="bat" [curl]="curl" [fzf]="fzf" [gh]="github-cli"
-        [gnupg]="gnupg" [git]="git" [htop]="htop" [jq]="jq"
-        [ripgrep]="ripgrep" [tree]="tree" [pipx]="python-pipx" [zsh]="zsh"
-    )
+    # --- Essential packages ---
+    local essential_names="htop, bat, curl, fzf, git, gnupg, ripgrep, zsh"
+    local -A essential_dnf=( [bat]="bat" [curl]="curl" [fzf]="fzf" [git]="git" [gnupg]="gnupg2" [htop]="htop" [ripgrep]="ripgrep" [zsh]="zsh" )
+    local -A essential_apt=( [bat]="bat" [curl]="curl" [fzf]="fzf" [git]="git" [gnupg]="gnupg" [htop]="htop" [ripgrep]="ripgrep" [zsh]="zsh" )
+    local -A essential_pacman=( [bat]="bat" [curl]="curl" [fzf]="fzf" [git]="git" [gnupg]="gnupg" [htop]="htop" [ripgrep]="ripgrep" [zsh]="zsh" )
 
-    local -n pkg_map="pkg_map_${PKG_MGR}"
-    local packages=()
-    for pkg in "${pkg_map[@]}"; do
-        packages+=("$pkg")
-    done
+    # --- Non-essential packages ---
+    local nonessential_names="gh, jq, tree, pipx, pnpm, docker"
+    local -A nonessential_dnf=( [gh]="gh" [jq]="jq" [tree]="tree" [pipx]="pipx" )
+    local -A nonessential_apt=( [gh]="gh" [jq]="jq" [tree]="tree" [pipx]="pipx" )
+    local -A nonessential_pacman=( [gh]="github-cli" [jq]="jq" [tree]="tree" [pipx]="python-pipx" )
 
-    $PKG_INSTALL "${packages[@]}"
+    local install_essential=false
+    local install_nonessential=false
 
-    # Install pnpm via corepack or npm (not in most distro repos)
-    if ! command -v pnpm &>/dev/null; then
-        if command -v corepack &>/dev/null; then
-            corepack enable pnpm && print_status "pnpm enabled via corepack"
-        elif command -v npm &>/dev/null; then
-            npm install -g pnpm && print_status "pnpm installed via npm"
-        else
-            print_warning "pnpm: install Node.js first, then run 'corepack enable pnpm'"
-        fi
+    if [[ "$ALL_YES" == "true" ]]; then
+        install_essential=true
+        install_nonessential=true
     else
-        print_status "pnpm already installed"
+        # Prompt user for package group selection
+        echo ""
+        echo -e "  ${BOLD}Select package groups to install:${NC}"
+        echo -e "    ${BOLD}1)${NC} Essential only     ${DIM}(${essential_names})${NC}"
+        echo -e "    ${BOLD}2)${NC} Non-essential only  ${DIM}(${nonessential_names})${NC}"
+        echo -e "    ${BOLD}3)${NC} All packages"
+        echo -e "    ${BOLD}s)${NC} Skip"
+        echo ""
+        echo -ne "  ${CYAN}>${NC} "
+        read -r pkg_choice
+
+        case "$pkg_choice" in
+            1) install_essential=true ;;
+            2) install_nonessential=true ;;
+            3) install_essential=true; install_nonessential=true ;;
+            s|S) print_status "Skipping system packages"; return ;;
+            *) print_warning "Invalid choice, skipping system packages"; return ;;
+        esac
     fi
 
-    # Docker (Fedora/RHEL uses moby or docker-ce repo)
-    if ! command -v docker &>/dev/null; then
-        if [[ "$PKG_MGR" == "dnf" ]]; then
-            echo -e "${YELLOW}Installing Docker via dnf...${NC}"
-            sudo dnf install -y dnf-plugins-core
-            sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo 2>/dev/null || true
-            sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-            sudo systemctl enable --now docker
-            sudo usermod -aG docker "$USER"
-            print_status "Docker installed (log out and back in for group changes)"
-        elif [[ "$PKG_MGR" == "apt" ]]; then
-            print_warning "Docker: follow https://docs.docker.com/engine/install/ubuntu/ for your distro"
-        elif [[ "$PKG_MGR" == "pacman" ]]; then
-            $PKG_INSTALL docker docker-compose docker-buildx
-            sudo systemctl enable --now docker
-            sudo usermod -aG docker "$USER"
-            print_status "Docker installed"
+    # Resolve package names for the detected package manager
+    local -n ess_map="essential_${PKG_MGR}"
+    local -n noness_map="nonessential_${PKG_MGR}"
+    local packages=()
+
+    if [[ "$install_essential" == "true" ]]; then
+        for pkg in "${ess_map[@]}"; do
+            packages+=("$pkg")
+        done
+    fi
+
+    if [[ "$install_nonessential" == "true" ]]; then
+        for pkg in "${noness_map[@]}"; do
+            packages+=("$pkg")
+        done
+    fi
+
+    if [[ ${#packages[@]} -gt 0 ]]; then
+        $PKG_INSTALL "${packages[@]}"
+    fi
+
+    # Non-essential extras: pnpm and Docker (only when non-essential is selected)
+    if [[ "$install_nonessential" == "true" ]]; then
+        # Install pnpm via corepack or npm (not in most distro repos)
+        if ! command -v pnpm &>/dev/null; then
+            if command -v corepack &>/dev/null; then
+                corepack enable pnpm && print_status "pnpm enabled via corepack"
+            elif command -v npm &>/dev/null; then
+                npm install -g pnpm && print_status "pnpm installed via npm"
+            else
+                print_warning "pnpm: install Node.js first, then run 'corepack enable pnpm'"
+            fi
+        else
+            print_status "pnpm already installed"
         fi
-    else
-        print_status "Docker already installed"
+
+        # Docker (Fedora/RHEL uses moby or docker-ce repo)
+        if ! command -v docker &>/dev/null; then
+            if [[ "$PKG_MGR" == "dnf" ]]; then
+                echo -e "${YELLOW}Installing Docker via dnf...${NC}"
+                sudo dnf install -y dnf-plugins-core
+                sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo 2>/dev/null || true
+                sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+                sudo systemctl enable --now docker
+                sudo usermod -aG docker "$USER"
+                print_status "Docker installed (log out and back in for group changes)"
+            elif [[ "$PKG_MGR" == "apt" ]]; then
+                print_warning "Docker: follow https://docs.docker.com/engine/install/ubuntu/ for your distro"
+            elif [[ "$PKG_MGR" == "pacman" ]]; then
+                $PKG_INSTALL docker docker-compose docker-buildx
+                sudo systemctl enable --now docker
+                sudo usermod -aG docker "$USER"
+                print_status "Docker installed"
+            fi
+        else
+            print_status "Docker already installed"
+        fi
     fi
 
     print_status "System packages done"
