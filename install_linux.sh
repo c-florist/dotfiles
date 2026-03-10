@@ -58,6 +58,7 @@ COMPONENTS=(
     "mise (dev tool manager)"
     "uv (Python package manager)"
     "Set zsh as default shell"
+    "GNOME desktop defaults"
 )
 
 DESCRIPTIONS=(
@@ -74,6 +75,7 @@ DESCRIPTIONS=(
     "Polyglot runtime/tool version manager"
     "Fast Python package installer"
     "Change login shell to zsh"
+    "Keyboard repeat, touchpad, dark theme, Nautilus (GNOME only)"
 )
 
 # All selected by default
@@ -277,10 +279,10 @@ install_kitty() {
 
     # Symlink config
     mkdir -p "$HOME/.config/kitty"
-    if [[ -f "$DOTFILES_DIR/kitty/kitty.conf" ]]; then
-        backup_and_link "$DOTFILES_DIR/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
+    if [[ -f "$DOTFILES_DIR/kitty/linux.kitty.conf" ]]; then
+        backup_and_link "$DOTFILES_DIR/kitty/linux.kitty.conf" "$HOME/.config/kitty/kitty.conf"
     else
-        print_warning "Kitty config not found at $DOTFILES_DIR/kitty/kitty.conf"
+        print_warning "Kitty config not found at $DOTFILES_DIR/kitty/linux.kitty.conf"
     fi
 
     # Theme
@@ -429,6 +431,20 @@ set_default_shell() {
     fi
 }
 
+install_gnome_defaults() {
+    echo -e "\n${BLUE}Applying GNOME desktop defaults...${NC}"
+    if [[ -f "$DOTFILES_DIR/linux/defaults.sh" ]]; then
+        if command -v gsettings &>/dev/null; then
+            bash "$DOTFILES_DIR/linux/defaults.sh"
+            print_status "GNOME defaults applied"
+        else
+            print_warning "gsettings not found - skipping (not a GNOME desktop?)"
+        fi
+    else
+        print_warning "linux/defaults.sh not found"
+    fi
+}
+
 # --- Map component indices to install functions ---
 INSTALL_FUNCTIONS=(
     install_system_packages
@@ -444,6 +460,7 @@ INSTALL_FUNCTIONS=(
     install_mise
     install_uv
     set_default_shell
+    install_gnome_defaults
 )
 
 # --- Parse CLI arguments ---

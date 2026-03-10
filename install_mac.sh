@@ -179,10 +179,10 @@ fi
 # Create symlinks for Kitty configuration
 echo -e "${YELLOW}Creating symlinks for Kitty configuration...${NC}"
 mkdir -p "$HOME/.config/kitty"
-if [[ -f "$DOTFILES_DIR/kitty/kitty.conf" ]]; then
-    backup_and_link "$DOTFILES_DIR/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
+if [[ -f "$DOTFILES_DIR/kitty/macos.kitty.conf" ]]; then
+    backup_and_link "$DOTFILES_DIR/kitty/macos.kitty.conf" "$HOME/.config/kitty/kitty.conf"
 else
-    print_warning "Kitty config not found at $DOTFILES_DIR/kitty/kitty.conf"
+    print_warning "Kitty config not found at $DOTFILES_DIR/kitty/macos.kitty.conf"
 fi
 
 # Install Kitty theme if not already present
