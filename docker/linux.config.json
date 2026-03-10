@@ -1,0 +1,6 @@
+{
+	"auths": {},
+	"credHelpers": {
+		"us-central1-docker.pkg.dev": "gcloud"
+	}
+}
