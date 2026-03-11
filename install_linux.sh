@@ -114,33 +114,24 @@ run_menu() {
     while true; do
         show_menu
         printf "  ${CYAN}>${NC} "
-        # Read a single keypress without waiting for Enter
-        read -rsn1 key
+        read -r choice
 
-        # If first char is a digit, check for a second digit (for items 10+)
-        if [[ "$key" =~ [0-9] ]]; then
-            local choice="$key"
-            # Brief timeout read for a possible second digit
-            read -rsn1 -t 0.5 key2 2>/dev/null || true
-            if [[ "$key2" =~ [0-9] ]]; then
-                choice="${choice}${key2}"
-            fi
-            local idx=$((choice - 1))
-            if [[ $idx -ge 0 && $idx -lt ${#COMPONENTS[@]} ]]; then
-                if [[ "${SELECTED[$idx]}" == "1" ]]; then
-                    SELECTED[$idx]="0"
-                else
-                    SELECTED[$idx]="1"
+        case "$choice" in
+            [0-9]|[0-9][0-9])
+                local idx=$((choice - 1))
+                if [[ $idx -ge 0 && $idx -lt ${#COMPONENTS[@]} ]]; then
+                    if [[ "${SELECTED[$idx]}" == "1" ]]; then
+                        SELECTED[$idx]="0"
+                    else
+                        SELECTED[$idx]="1"
+                    fi
                 fi
-            fi
-        else
-            case "$key" in
-                a|A) for i in "${!SELECTED[@]}"; do SELECTED[$i]="1"; done ;;
-                n|N) for i in "${!SELECTED[@]}"; do SELECTED[$i]="0"; done ;;
-                i|I) break ;;
-                q|Q) printf "\n  ${DIM}Cancelled.${NC}\n"; exit 0 ;;
-            esac
-        fi
+                ;;
+            a|A) for i in "${!SELECTED[@]}"; do SELECTED[$i]="1"; done ;;
+            n|N) for i in "${!SELECTED[@]}"; do SELECTED[$i]="0"; done ;;
+            i|I) break ;;
+            q|Q) printf "\n  ${DIM}Cancelled.${NC}\n"; exit 0 ;;
+        esac
     done
 }
 
@@ -162,7 +153,6 @@ backup_and_link() {
         print_status "Linked: $target_file -> $source_file"
     else
         print_error "Source file not found: $source_file"
-        return 1
     fi
 }
 
@@ -234,9 +224,17 @@ install_system_packages() {
         # Install pnpm via corepack or npm (not in most distro repos)
         if ! command -v pnpm &>/dev/null; then
             if command -v corepack &>/dev/null; then
-                corepack enable pnpm && print_status "pnpm enabled via corepack"
+                if corepack enable pnpm; then
+                    print_status "pnpm enabled via corepack"
+                else
+                    print_warning "corepack enable pnpm failed"
+                fi
             elif command -v npm &>/dev/null; then
-                npm install -g pnpm && print_status "pnpm installed via npm"
+                if npm install -g pnpm; then
+                    print_status "pnpm installed via npm"
+                else
+                    print_warning "npm install pnpm failed"
+                fi
             else
                 print_warning "pnpm: install Node.js first, then run 'corepack enable pnpm'"
             fi
@@ -326,8 +324,11 @@ install_kitty() {
     # Theme
     if [[ ! -f "$HOME/.config/kitty/current-theme.conf" ]]; then
         if command -v kitten &>/dev/null; then
-            kitten themes --reload-in=all Catppuccin-Frappe
-            print_status "Kitty theme installed"
+            if kitten themes --reload-in=all Catppuccin-Frappe; then
+                print_status "Kitty theme installed"
+            else
+                print_warning "Kitty theme install failed; run 'kitten themes Catppuccin-Frappe' manually"
+            fi
         else
             print_warning "kitten not found; run 'kitten themes Catppuccin-Frappe' after Kitty is available"
         fi
@@ -405,7 +406,7 @@ install_ssh_config() {
     # Prompt for SSH key creation
     echo -e "${BLUE}Checking for SSH keys specified in config...${NC}"
     local identity_files
-    identity_files=$(grep "IdentityFile" "$DOTFILES_DIR/ssh/config" | awk '{print $2}' | sed "s|~|$HOME|g")
+    identity_files=$(grep "IdentityFile" "$DOTFILES_DIR/ssh/config" 2>/dev/null | awk '{print $2}' | sed "s|~|$HOME|g") || true
 
     for key_file in $identity_files; do
         if [[ ! -f "$key_file" ]]; then
@@ -457,7 +458,7 @@ set_default_shell() {
     echo -e "\n${BLUE}Setting zsh as default shell...${NC}"
     if [[ "$SHELL" != *"zsh"* ]]; then
         local zsh_path
-        zsh_path="$(which zsh)"
+        zsh_path="$(command -v zsh)" || { print_warning "zsh not found in PATH"; return; }
         # Ensure zsh is in /etc/shells
         if ! grep -q "$zsh_path" /etc/shells; then
             echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
@@ -539,7 +540,7 @@ fi
 # Count selected
 selected_count=0
 for s in "${SELECTED[@]}"; do
-    [[ "$s" == "1" ]] && ((selected_count++))
+    [[ "$s" == "1" ]] && ((selected_count++)) || true
 done
 
 if [[ $selected_count -eq 0 ]]; then
