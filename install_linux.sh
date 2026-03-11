@@ -59,6 +59,7 @@ COMPONENTS=(
     "uv (Python package manager)"
     "Set zsh as default shell"
     "GNOME desktop defaults"
+    "Set hostname"
 )
 
 DESCRIPTIONS=(
@@ -76,12 +77,13 @@ DESCRIPTIONS=(
     "Fast Python package installer"
     "Change login shell to zsh"
     "Keyboard repeat, touchpad, dark theme, Nautilus (GNOME only)"
+    "Set machine hostname to 'sietch'"
 )
 
-# All selected by default
+# All deselected by default
 SELECTED=()
 for i in "${!COMPONENTS[@]}"; do
-    SELECTED+=("1")
+    SELECTED+=("0")
 done
 
 # --- Interactive selection menu ---
@@ -484,6 +486,19 @@ install_gnome_defaults() {
     fi
 }
 
+set_hostname() {
+    echo -e "\n${BLUE}Setting hostname...${NC}"
+    local target_hostname="sietch"
+    local current_hostname
+    current_hostname=$(hostnamectl hostname 2>/dev/null || hostname)
+    if [[ "$current_hostname" == "$target_hostname" ]]; then
+        print_status "Hostname is already '$target_hostname'"
+    else
+        sudo hostnamectl set-hostname "$target_hostname"
+        print_status "Hostname set to '$target_hostname' (takes effect on next login)"
+    fi
+}
+
 # --- Map component indices to install functions ---
 INSTALL_FUNCTIONS=(
     install_system_packages
@@ -500,6 +515,7 @@ INSTALL_FUNCTIONS=(
     install_uv
     set_default_shell
     install_gnome_defaults
+    set_hostname
 )
 
 # --- Parse CLI arguments ---
@@ -560,4 +576,4 @@ done
 
 echo ""
 echo -e "${GREEN}${BOLD}  Setup complete!${NC}"
-echo -e "${BLUE}  Restart your terminal or run 'source ~/.zshrc' to apply changes.${NC}"
+echo -e "${BLUE}  Restart your terminal or run 'exec zsh' to apply changes.${NC}"

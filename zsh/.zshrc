@@ -28,7 +28,9 @@ export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-ran
 export FZF_ALT_C_OPTS="--preview 'tree -C -L 2 {}' --preview-window=right:50%"
 
 # mise-en-place
-eval "$(~/.local/bin/mise activate zsh)"
+if [[ -x "$HOME/.local/bin/mise" ]]; then
+    eval "$(~/.local/bin/mise activate zsh)"
+fi
 
 # Kitty shell integration
 if [[ "$TERM" == "xterm-kitty" ]]; then

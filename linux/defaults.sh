@@ -32,7 +32,7 @@ gsettings set org.gnome.desktop.peripherals.keyboard delay 200
 gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 
 # Natural scrolling
-gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
+gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false
 
 # ----------------------------------------
 # File manager (Nautilus)
