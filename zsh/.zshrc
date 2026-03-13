@@ -46,4 +46,6 @@ fi
 
 fpath+=~/.zfunc; autoload -Uz compinit; compinit
 
-[ -f "$HOME/.zshrc_workshell" ] && source "$HOME/.zshrc_workshell"
+if [[ -f "$HOME/.zshrc_workshell" ]]; then
+    source "$HOME/.zshrc_workshell"
+fi
